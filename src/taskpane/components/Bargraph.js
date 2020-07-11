@@ -17,10 +17,13 @@ class Bargraph extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            
+            innerWidth: window.innerWidth,
+            innerHeight: window.innerHeight
       };
     }
     
+    
+        
     componentDidMount() {
 
         // const s = document.createElement('script'); 
@@ -40,8 +43,12 @@ class Bargraph extends React.Component{
 // .attr("cy", 30)
 // .attr("r", 20);
         var margin = {top: 40, right: 20, bottom: 30, left: 40};
-        var width = 960 - margin.left - margin.right;
-        var height = 500 - margin.top - margin.bottom;
+        var width = this.state.innerWidth - margin.left - margin.right;
+        var height = this.state.innerHeight - margin.top - margin.bottom;
+
+        window.onresize = function(event) {
+            this.setState({innerWidth: window.innerWidth, innerHeight: window.innerHeight});
+        }; 
 
         var formatPercent = d3.format(".0%");
 
@@ -125,8 +132,9 @@ class Bargraph extends React.Component{
     }
 
     render(){
+        window.addEventListener('resize', this.handleResize);
         return(
-            <div style={}>
+            <div>
                 <h1>Bargraph Page</h1>
                 <h1> Hi Akshay! </h1>
                 {this.drawGraph()}
