@@ -1,4 +1,4 @@
-import React, {useCallback, useState, Component} from 'react';
+import React, {useCallback, useState, useEffect, Component} from 'react';
 import Dropzone, {useDropzone} from 'react-dropzone';
 import { readString } from 'react-papaparse'
 import { Dropdown, Container, Row, Col, Button } from 'react-bootstrap'
@@ -51,6 +51,7 @@ export var FileDropZone = function() {
     const [yAxisValue, setYAxisValue] = useState("");
     const [tooltipValues, setTooltipValues] = useState([]);
     const [dropZoneText, setDropZoneText] = useState("Drag & drop CSV file, or click to select file");
+    const [savedGraphDrawn, setSavedGraphDrawn] = useState(false);
     
     // To upload and read. file on drop
     const onDrop = useCallback((acceptedFiles) => {
@@ -106,8 +107,6 @@ export var FileDropZone = function() {
                 possibleYAxisValues.push({ value: headers[i], label: headers[i] });
             possibleXAxisValues.push({ value: headers[i], label: headers[i] });
         }
-        
-        
     }
     
     // Function to handle x axis value change
@@ -169,7 +168,7 @@ export var FileDropZone = function() {
         var svg = d3.select("div.barGraph").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         svg.call(tip);
@@ -227,6 +226,14 @@ export var FileDropZone = function() {
         localStorage.setItem('dropZoneText', dropZoneText);
     }
     
+    // Similar to Cmponent Did Mount
+    useEffect(() => {
+        if(!savedGraphDrawn) {
+            readFromStorage();
+            setSavedGraphDrawn(true);
+        }
+    });
+
     // Create menu items
     var menus = <>
                         <Row>
@@ -256,9 +263,6 @@ export var FileDropZone = function() {
                 </>;
     
     // Return the Dropzone element
-    const func= () => {
-        readFromStorage();
-    }
         return (
         <>
             <Container fluid="md">
@@ -283,7 +287,6 @@ export var FileDropZone = function() {
                     </Col>
                 </Row>
                 {menus}
-                {func()}
             </Container>
         </>
     )
@@ -307,9 +310,7 @@ function readFromStorage()
         yAxisValue = localStorage.getItem('yAxisValue');
         tooltipValues = localStorage.getItem('tooltipValues');
         dropZoneText = localStorage.getItem('dropZoneText');
-        // var h1 = document.createElement("h1");
-        // h1.innerHTML = headers;
-        // document.body.appendChild(h1);
+        
 
         // Plot saved graph
         plotSavedGraph(fileName,uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText,fileContents,fileRows,headers,
@@ -322,9 +323,7 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
     headerTypes,possibleXAxisValues,possibleYAxisValues) => {
     // First delete the existing SVG elements
     d3.selectAll("svg").remove();
-    // var h1 = document.createElement("h1");
-    //     h1.innerHTML = xAxisValue;
-    //     document.body.appendChild(h1);
+    
     var margin = {top: 40, right: 20, bottom: 30, left: 40};
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -355,15 +354,11 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
         return tooltipContent;
     })
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("div.barGraph").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+        .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        var h1 = document.createElement("h1");
-        h1.innerHTML = xAxisValue;
-        document.body.appendChild(h1);
 
     svg.call(tip);
 
