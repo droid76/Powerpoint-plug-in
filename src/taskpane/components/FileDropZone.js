@@ -72,7 +72,7 @@ export var FileDropZone = function() {
               console.log(fileRows);
               
               // Set uploaded to true
-              setUploaded(false);
+            //   setUploaded(false);
               setUploaded(true);
               
               // Clear the existing menu options
@@ -81,7 +81,7 @@ export var FileDropZone = function() {
               
               // Set dropZoneText
               setDropZoneText("Uploaded:" + file.name);
-              localStorage.setItem('fileName', file.name);
+            //   localStorage.setItem('fileName', file.name);
           }
           reader.readAsText(file);
         })
@@ -256,7 +256,10 @@ export var FileDropZone = function() {
                 </>;
     
     // Return the Dropzone element
-    return (
+    const func= () => {
+        readFromStorage();
+    }
+        return (
         <>
             <Container fluid="md">
                 <Row>
@@ -280,37 +283,51 @@ export var FileDropZone = function() {
                     </Col>
                 </Row>
                 {menus}
+                {func()}
             </Container>
         </>
         
     )
 }
 
-// Read previously saved items if any
-var fileName = localStorage.getItem('fileName');
-var uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText;
-if(!fileName === null) {
-    fileContents = localStorage.getItem('fileContents');
-    fileRows = localStorage.getItem('fileRows');
-    headers = localStorage.getItem('headers');
-    headerTypes = localStorage.getItem('headerTypes');
-    possibleYAxisValues = localStorage.getItem('possibleYAxisValues');
-    possibleXAxisValues = localStorage.getItem('possibleXAxisValues');
-    uploaded = localStorage.getItem('uploaded');
-    xAxisValue = localStorage.getItem('xAxisValue');
-    yAxisValue = localStorage.getItem('yAxisValue');
-    tooltipValues = localStorage.getItem('tooltipValues');
-    dropZoneText = localStorage.getItem('dropZoneText');
 
-    // Plot saved graph
-    plotSavedGraph();
+
+// Read previously saved items if any
+function readFromStorage()
+{
+    var fileName = localStorage.getItem('fileName');
+
+    var uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText;
+    if(fileName != null) {
+        fileContents = localStorage.getItem('fileContents');
+        fileRows = localStorage.getItem('fileRows');
+        headers = localStorage.getItem('headers');
+        headerTypes = localStorage.getItem('headerTypes');
+        possibleYAxisValues = localStorage.getItem('possibleYAxisValues');
+        possibleXAxisValues = localStorage.getItem('possibleXAxisValues');
+        uploaded = localStorage.getItem('uploaded');
+        xAxisValue = localStorage.getItem('xAxisValue');
+        yAxisValue = localStorage.getItem('yAxisValue');
+        tooltipValues = localStorage.getItem('tooltipValues');
+        dropZoneText = localStorage.getItem('dropZoneText');
+        // var h1 = document.createElement("h1");
+        // h1.innerHTML = headers;
+        // document.body.appendChild(h1);
+
+        // Plot saved graph
+        plotSavedGraph(fileName,uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText,fileContents,fileRows,headers,
+            headerTypes,possibleXAxisValues,possibleYAxisValues);
+    }
 }
 
 // Function to plot graph (using local storage if already saved)
-const plotSavedGraph = () => {
+const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText,fileContents,fileRows,headers,
+    headerTypes,possibleXAxisValues,possibleYAxisValues) => {
     // First delete the existing SVG elements
     d3.selectAll("svg").remove();
-    
+    var h1 = document.createElement("h1");
+        h1.innerHTML = xAxisValue;
+        document.body.appendChild(h1);
     var margin = {top: 40, right: 20, bottom: 30, left: 40};
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
