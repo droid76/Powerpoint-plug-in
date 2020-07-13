@@ -72,7 +72,7 @@ export var FileDropZone = function() {
               console.log(fileRows);
               
               // Set uploaded to true
-            //   setUploaded(false);
+              setUploaded(false);
               setUploaded(true);
               
               // Clear the existing menu options
@@ -81,7 +81,7 @@ export var FileDropZone = function() {
               
               // Set dropZoneText
               setDropZoneText("Uploaded:" + file.name);
-            //   localStorage.setItem('fileName', file.name);
+              localStorage.setItem('fileName', file.name);
           }
           reader.readAsText(file);
         })
@@ -115,12 +115,12 @@ export var FileDropZone = function() {
         setXAxisValue(selectedOption.label);
     }
     
-    // Function to handle x axis value change
+    // Function to handle y axis value change
     const changeYAxisValue = (selectedOption) => {
         setYAxisValue(selectedOption.label);
     }
     
-    // Function to handle x axis value change
+    // Function to handle tooltip values
     const changeTooltipValues = (selectedOptions) => {
         var labels = [];
         for(var i=0;i<selectedOptions.length;i++)
@@ -286,11 +286,8 @@ export var FileDropZone = function() {
                 {func()}
             </Container>
         </>
-        
     )
 }
-
-
 
 // Read previously saved items if any
 function readFromStorage()
@@ -325,9 +322,9 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
     headerTypes,possibleXAxisValues,possibleYAxisValues) => {
     // First delete the existing SVG elements
     d3.selectAll("svg").remove();
-    var h1 = document.createElement("h1");
-        h1.innerHTML = xAxisValue;
-        document.body.appendChild(h1);
+    // var h1 = document.createElement("h1");
+    //     h1.innerHTML = xAxisValue;
+    //     document.body.appendChild(h1);
     var margin = {top: 40, right: 20, bottom: 30, left: 40};
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -358,11 +355,15 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
         return tooltipContent;
     })
 
-    var svg = d3.select("div.barGraph").append("svg")
+    var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
     .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        var h1 = document.createElement("h1");
+        h1.innerHTML = xAxisValue;
+        document.body.appendChild(h1);
 
     svg.call(tip);
 
