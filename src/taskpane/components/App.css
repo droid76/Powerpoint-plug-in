@@ -35,7 +35,22 @@
 .App-link {
   color: #61dafb;
 }
-
+.blueGradient{
+  background-image: linear-Gradient(to right,#02101f,#006699)!important;
+ }
+  
+ .active{
+  color:white !important;
+  filter: brightness(100%) !important;
+ }
+ .inactive{
+  color:white !important;
+  filter: brightness(60%);
+ }
+ .left-nav:hover{
+  color:white !important;
+  filter: brightness(100%) !important;
+ }
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -44,6 +59,17 @@
     transform: rotate(360deg);
   }
 }
+
+.link{
+margin: 15px;
+padding-bottom: 20px;
+text-decoration: none;
+}
+.mr-auto{
+padding:20px;
+}
+
+
 
 body {
   margin: 0;

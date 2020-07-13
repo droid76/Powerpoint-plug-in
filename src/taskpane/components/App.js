@@ -7,6 +7,7 @@ import Scattergraph from "./Scattergraph.js"
 import Piechart from "./Piechart.js"
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Progress from "./Progress";
+import Navigationbar from './Navigationbar';
 /* global Button, console, Header, HeroList, HeroListItem, Office, Progress */
 
 export default class App extends React.Component {
@@ -22,6 +23,7 @@ export default class App extends React.Component {
 
     return (
      <div className="App">
+       <Navigationbar/>
           <h1>Graph Plot</h1>
           <Switch>
             <Route path="/" component={Home} exact />

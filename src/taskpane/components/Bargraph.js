@@ -23,25 +23,13 @@ class Bargraph extends React.Component{
     }
     
     
-        
-    componentDidMount() {
-
-        // const s = document.createElement('script'); 
-        // s.type = 'text/javascript';
-        // s.async = true;
-        // s.innerHTML = contents;
-        // console.log(s);
-        // this.instance.appendChild(s);
+    componentDidMount()
+    {
+        this.drawGraph();
     }
 
+
     drawGraph() {
-//         var svgContainer = d3.select("body").append("svg")
-//                                     .attr("width", 200)
-//                                     .attr("height", 200)
-//                                     .append("circle")
-// .attr("cx", 30)
-// .attr("cy", 30)
-// .attr("r", 20);
         var margin = {top: 40, right: 20, bottom: 30, left: 40};
         var width = this.state.innerWidth - margin.left - margin.right;
         var height = this.state.innerHeight - margin.top - margin.bottom;
@@ -86,12 +74,6 @@ class Bargraph extends React.Component{
                 B,.01492,256,"Google"
                 C,.02780,562,"Mathworks"
                 D,.04253,5665,"Hello"`);
-
-        // d3.csv("./data.csv").then(function(data) {
-  
-
-        //     console.log("data is");
-        //     console.log(data);
         x.domain(data.map(function(d) { return d.letter; }));
         y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
 
@@ -133,11 +115,10 @@ class Bargraph extends React.Component{
 
     render(){
         window.addEventListener('resize', this.handleResize);
+        localStorage.setItem('name','akshay');
         return(
             <div>
                 <h1>Bargraph Page</h1>
-                <h1> Hi Akshay! </h1>
-                {this.drawGraph()}
             </div>
         );      
     }

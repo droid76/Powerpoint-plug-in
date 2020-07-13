@@ -15,8 +15,10 @@ class Piechart extends React.Component{
       };
     }
     
-    componentDidMount() {
-      
+          
+    componentWillUnMount() 
+    {
+        window.location.reload(true);
     }
   
     render(){

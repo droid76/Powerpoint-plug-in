@@ -15,15 +15,18 @@ class Linegraph extends React.Component{
       };
     }
     
-    componentDidMount() {
-      
+          
+    componentWillUnMount() 
+    {
+        window.location.reload(true);
     }
   
     render(){
-            console.log("bargraph")
+            var local = localStorage.getItem('name');
              return(
                <div>
                   <h1>Linegraph Page</h1>
+                  <h2>{local}</h2>
                </div>
              )
              
