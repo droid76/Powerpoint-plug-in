@@ -10,14 +10,14 @@ const d3 = {
 }
 
 
-export class BarGraph extends Component {
+export default class BarGraph extends Component {
 	constructor(props) {
 		super(props);
         this.state = {graphDrawn: false}
 	}
 
 	componentDidMount() {
-        this.drawGraph();
+        // this.drawGraph();
 	}
     
     drawGraph() {
@@ -48,7 +48,7 @@ export class BarGraph extends Component {
                 + "<strong>Name:</strong> <span style='color:red'>" + d.name + "</span>";
         })
 
-        var svg = d3.select("body").append("svg")
+        var svg = d3.select("#chart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -103,7 +103,8 @@ export class BarGraph extends Component {
 	render() {
         return (
                 <>
-                    
+                    <FileDropZone/>
+                    <div id="chart"></div>
                 </>
         );
 	}

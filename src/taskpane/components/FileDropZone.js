@@ -135,8 +135,8 @@ export var FileDropZone = function() {
         d3.selectAll("svg").remove();
         
         var margin = {top: 40, right: 20, bottom: 30, left: 40};
-        var width = 960 - margin.left - margin.right;
-        var height = 500 - margin.top - margin.bottom;
+        var width = window.innerWidth - margin.left - margin.right;
+        var height = window.innerHeight - margin.top - margin.bottom;
 
         var formatPercent = d3.format(".0%");
 

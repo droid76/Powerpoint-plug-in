@@ -5,6 +5,7 @@ import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { HashRouter, Route, Switch } from 'react-router-dom';
+// import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 /* global AppCpntainer, Component, document, Office, module, React, require */
 
 initializeIcons();

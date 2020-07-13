@@ -27,6 +27,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "bootstrap": "^4.5.0",
     "core-js": "^3.1.4",
     "d3": "^5.16.0",
     "d3-tip": "^0.9.1",
