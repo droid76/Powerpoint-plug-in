@@ -81,6 +81,7 @@ export var FileDropZone = function() {
               
               // Set dropZoneText
               setDropZoneText("Uploaded:" + file.name);
+              localStorage.setItem('fileName', file.name);
           }
           reader.readAsText(file);
         })
@@ -211,6 +212,19 @@ export var FileDropZone = function() {
             d[yAxisValue] = +d[yAxisValue];
             return d;
         }
+
+        // Save state locally (persistent)
+        localStorage.setItem('fileContents', fileContents);
+        localStorage.setItem('fileRows', fileRows);
+        localStorage.setItem('headers', headers);
+        localStorage.setItem('headerTypes', headerTypes);
+        localStorage.setItem('possibleYAxisValues', possibleYAxisValues);
+        localStorage.setItem('possibleXAxisValues', possibleXAxisValues);
+        localStorage.setItem('uploaded', uploaded);
+        localStorage.setItem('xAxisValue', xAxisValue);
+        localStorage.setItem('yAxisValue', yAxisValue);
+        localStorage.setItem('tooltipValues', tooltipValues);
+        localStorage.setItem('dropZoneText', dropZoneText);
     }
     
     // Create menu items
@@ -270,4 +284,107 @@ export var FileDropZone = function() {
         </>
         
     )
+}
+
+// Read previously saved items if any
+var fileName = localStorage.getItem('fileName');
+var uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText;
+if(!fileName === null) {
+    fileContents = localStorage.getItem('fileContents');
+    fileRows = localStorage.getItem('fileRows');
+    headers = localStorage.getItem('headers');
+    headerTypes = localStorage.getItem('headerTypes');
+    possibleYAxisValues = localStorage.getItem('possibleYAxisValues');
+    possibleXAxisValues = localStorage.getItem('possibleXAxisValues');
+    uploaded = localStorage.getItem('uploaded');
+    xAxisValue = localStorage.getItem('xAxisValue');
+    yAxisValue = localStorage.getItem('yAxisValue');
+    tooltipValues = localStorage.getItem('tooltipValues');
+    dropZoneText = localStorage.getItem('dropZoneText');
+
+    // Plot saved graph
+    plotSavedGraph();
+}
+
+// Function to plot graph (using local storage if already saved)
+const plotSavedGraph = () => {
+    // First delete the existing SVG elements
+    d3.selectAll("svg").remove();
+    
+    var margin = {top: 40, right: 20, bottom: 30, left: 40};
+    var width = window.innerWidth - margin.left - margin.right;
+    var height = window.innerHeight - margin.top - margin.bottom;
+
+    var formatPercent = d3.format(".0%");
+
+    var x = d3.scaleBand()
+        .rangeRound([0, width], .1);
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y)
+        .tickFormat(formatPercent);
+
+    var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+        var tooltipContent = "";
+        for(var j=0;j<tooltipValues.length;j++){
+            tooltipContent += "<strong>"+tooltipValues[j]+":</strong> <span style='color:red'>" + d[tooltipValues[j]] + "</span>";
+            if(j!=tooltipValues.length - 1)
+                tooltipContent += "<br/><br/>";
+        }
+        return tooltipContent;
+    })
+
+    var svg = d3.select("div.barGraph").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.call(tip);
+
+    var data = d3.csvParse(fileContents);
+    
+        console.log("data is");
+        console.log(data);
+        x.domain(data.map(function(d) { return d[xAxisValue]; }));
+        y.domain([0, d3.max(data, function(d) { return d[yAxisValue]; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text(yAxisValue);
+
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d[xAxisValue]); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { console.log("yaxis value is"); console.log(yAxisValue); console.log(d); return y(d[yAxisValue]); })
+            .attr("height", function(d) {console.log("height is"); console.log(height - y(d[yAxisValue])); return height - y(d[yAxisValue]); })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide)
+
+
+    function type(d) {
+        d[yAxisValue] = +d[yAxisValue];
+        return d;
+    }
 }
