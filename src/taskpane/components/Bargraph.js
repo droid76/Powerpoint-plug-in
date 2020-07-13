@@ -1,11 +1,7 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { Link,NavLink } from 'react-router-dom'
-import Navbar from "react-bootstrap/Navbar"
-import Nav from "react-bootstrap/Nav"
-import NavDropdown from "react-bootstrap/NavDropdown"
-import {contents} from './BargraphScriptContents.js'
+import React, {Component} from 'react';
+//import {contents} from './BarGraphScriptContents.js'
+import {FileDropZone} from './FileDropZone.js'
+import './App.css'
 import * as d3module from 'd3'
 import d3tip from 'd3-tip'
 const d3 = {
@@ -13,30 +9,21 @@ const d3 = {
   tip: d3tip
 }
 
-class Bargraph extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            innerWidth: window.innerWidth,
-            innerHeight: window.innerHeight
-      };
-    }
-    
-    
-    componentDidMount()
-    {
+
+export class BarGraph extends Component {
+	constructor(props) {
+		super(props);
+        this.state = {graphDrawn: false}
+	}
+
+	componentDidMount() {
         this.drawGraph();
-    }
-
-
+	}
+    
     drawGraph() {
         var margin = {top: 40, right: 20, bottom: 30, left: 40};
-        var width = this.state.innerWidth - margin.left - margin.right;
-        var height = this.state.innerHeight - margin.top - margin.bottom;
-
-        window.onresize = function(event) {
-            this.setState({innerWidth: window.innerWidth, innerHeight: window.innerHeight});
-        }; 
+        var width = 960 - margin.left - margin.right;
+        var height = 500 - margin.top - margin.bottom;
 
         var formatPercent = d3.format(".0%");
 
@@ -74,37 +61,37 @@ class Bargraph extends React.Component{
                 B,.01492,256,"Google"
                 C,.02780,562,"Mathworks"
                 D,.04253,5665,"Hello"`);
-        x.domain(data.map(function(d) { return d.letter; }));
-        y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
-
-
         
+            console.log("data is");
+            console.log(data);
+            x.domain(data.map(function(d) { return d.letter; }));
+            y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
 
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("Frequency");
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Frequency");
 
-        svg.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.letter); })
-            .attr("width", x.bandwidth())
-            .attr("y", function(d) { console.log("y is"); console.log(d); return y(d.frequency); })
-            .attr("height", function(d) { return height - y(d.frequency); })
-            .on('mouseover', tip.show)
-            .on('mouseout', tip.hide)
+            svg.selectAll(".bar")
+                .data(data)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.letter); })
+                .attr("width", x.bandwidth())
+                .attr("y", function(d) { console.log("y is"); console.log(d); return y(d.frequency); })
+                .attr("height", function(d) { return height - y(d.frequency); })
+                .on('mouseover', tip.show)
+                .on('mouseout', tip.hide)
 
 
         function type(d) {
@@ -113,15 +100,11 @@ class Bargraph extends React.Component{
         }
     }
 
-    render(){
-        window.addEventListener('resize', this.handleResize);
-        localStorage.setItem('name','akshay');
-        return(
-            <div>
-                <h1>Bargraph Page</h1>
-            </div>
-        );      
-    }
-  }
-  
-  export default Bargraph;
+	render() {
+        return (
+                <>
+                    
+                </>
+        );
+	}
+}
