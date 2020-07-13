@@ -9,6 +9,7 @@ import './App.css'
 // For Graph Only
 import * as d3module from 'd3'
 import d3tip from 'd3-tip'
+import { range } from 'd3';
 const d3 = {
   ...d3module,
   tip: d3tip
@@ -24,6 +25,9 @@ var headers = [];
 var headerTypes = [];
 var possibleYAxisValues = [];
 var possibleXAxisValues = [];
+var xAxisValuePred = ""; 
+var yAxisValuePred = "";
+var tooltipValuesPred = [];
 
 const getUploadParams = () => {
     return { url: 'https://httpbin.org/post' }
@@ -112,11 +116,13 @@ export var FileDropZone = function() {
     
     // Function to handle x axis value change
     const changeXAxisValue = (selectedOption) => {
+        xAxisValuePred = selectedOption.label;
         setXAxisValue(selectedOption.label);
     }
     
     // Function to handle y axis value change
     const changeYAxisValue = (selectedOption) => {
+        yAxisValuePred = selectedOption.label;
         setYAxisValue(selectedOption.label);
     }
     
@@ -125,6 +131,7 @@ export var FileDropZone = function() {
         var labels = [];
         for(var i=0;i<selectedOptions.length;i++)
             labels.push(selectedOptions[i].label);
+        tooltipValuesPred = labels;
         setTooltipValues(labels);
         console.log("labels is ");
         console.log(labels);
@@ -133,7 +140,7 @@ export var FileDropZone = function() {
     {
         var yvalues = [];
         var xvalues = [];
-        const data = '{"nargout":"1","rhs":"[[1,2,3,4,5,6,7,8,9,10,11,34,56,89,91]]"}';
+        const data = '{"nargout":1,"rhs":[[1,2,3,4,5,6,7,8,9,10,11,34,56,89,91]]}';
         fetch("http://ah-vgunda-l.dhcp.mathworks.com:9910/linearpred/linearpred",
         {
             method:'POST',
@@ -156,7 +163,10 @@ export var FileDropZone = function() {
                 // var h1 = document.createElement("h1");
                 // h1.innerHTML = error;
                 // document.body.appendChild(h1);
-                
+
+                // These are only the predicted values
+                yvalues = [0.058,0.51,0.8,0.005];
+                readFromAPI(yvalues);
             }
         )
 
@@ -234,8 +244,8 @@ export var FileDropZone = function() {
                 .attr("class", "bar")
                 .attr("x", function(d) { return x(d[xAxisValue]); })
                 .attr("width", x.bandwidth())
-                .attr("y", function(d) { console.log("yaxis value is"); console.log(yAxisValue); console.log(d); return y(d[yAxisValue]); })
-                .attr("height", function(d) {console.log("height is"); console.log(height - y(d[yAxisValue])); return height - y(d[yAxisValue]); })
+                .attr("y", function(d) {  return y(d[yAxisValue]); })
+                .attr("height", function(d) { return height - y(d[yAxisValue]); })
                 .on('mouseover', tip.show)
                 .on('mouseout', tip.hide)
 
@@ -293,6 +303,7 @@ export var FileDropZone = function() {
                         </Row>
                         <Row>
                             <div className="barGraph"/>
+                            <div className="barGraphPredicted"/>
                         </Row>
                 </>;
     
@@ -325,6 +336,7 @@ export var FileDropZone = function() {
         </>
     )
 }
+
 
 // Read previously saved items if any
 function readFromStorage()
@@ -397,6 +409,120 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
     svg.call(tip);
 
     var data = d3.csvParse(fileContents);
+    
+        console.log("data is");
+        console.log(data);
+        x.domain(data.map(function(d) { return d[xAxisValue]; }));
+        y.domain([0, d3.max(data, function(d) { return d[yAxisValue]; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text(yAxisValue);
+
+        svg.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d[xAxisValue]); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { console.log("yaxis value is"); console.log(yAxisValue); console.log(d); return y(d[yAxisValue]); })
+            .attr("height", function(d) {console.log("height is"); console.log(height - y(d[yAxisValue])); return height - y(d[yAxisValue]); })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide)
+
+
+    function type(d) {
+        d[yAxisValue] = +d[yAxisValue];
+        return d;
+    }
+}
+
+// Plot values obtained from API Endpoint
+function readFromAPI(yValues)
+{
+    var data = d3.csvParse(fileContents);
+    
+    // Append predicted values to existing contents
+    for(var i=0;i<yValues.length;i++) {
+        // Create new object
+        var newObj = {};
+
+        // Add x and y values
+        newObj[xAxisValuePred] = "Pred"+i;
+        newObj[yAxisValuePred] = yValues[i];
+
+        // Add tooltip values
+        for(var j=0;j<tooltipValuesPred.length;j++)
+            if(!(tooltipValuesPred[j] == xAxisValuePred || tooltipValuesPred[j] == yAxisValuePred))
+                newObj[tooltipValuesPred[j]] = "Not Applicable";
+
+        data.push(newObj);
+    }
+    
+    // Plot saved graph
+    plotPredictedGraph(xAxisValuePred,  yAxisValuePred, tooltipValuesPred, data);
+}
+
+// Function to plot graph with predicted values
+const plotPredictedGraph = (xAxisValue,  yAxisValue, tooltipValues, data) => {
+
+    var h1 = document.createElement("h1");
+    h1.innerHTML = data;
+    document.body.appendChild(h1);
+
+    // First delete the existing SVG elements
+    d3.selectAll("svg").remove();
+    
+    var margin = {top: 40, right: 20, bottom: 30, left: 40};
+    var width = window.innerWidth - margin.left - margin.right;
+    var height = window.innerHeight - margin.top - margin.bottom;
+
+    var formatPercent = d3.format(".0%");
+
+    var x = d3.scaleBand()
+        .rangeRound([0, width], .1);
+
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
+    var xAxis = d3.axisBottom(x);
+
+    var yAxis = d3.axisLeft(y)
+        .tickFormat(formatPercent);
+
+    var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+        var tooltipContent = "";
+        for(var j=0;j<tooltipValues.length;j++){
+            tooltipContent += "<strong>"+tooltipValues[j]+":</strong> <span style='color:red'>" + d[tooltipValues[j]] + "</span>";
+            if(j!=tooltipValues.length - 1)
+                tooltipContent += "<br/><br/>";
+        }
+        return tooltipContent;
+    })
+
+    var svg = d3.select("div.barGraphPredicted").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.call(tip);
+
+    //var data = d3.csvParse(fileContents);
     
         console.log("data is");
         console.log(data);
