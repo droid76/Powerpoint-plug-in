@@ -222,7 +222,7 @@ export var FileDropZone = function() {
         localStorage.setItem('uploaded', uploaded);
         localStorage.setItem('xAxisValue', xAxisValue);
         localStorage.setItem('yAxisValue', yAxisValue);
-        localStorage.setItem('tooltipValues', tooltipValues);
+        localStorage.setItem('tooltipValues', JSON.stringify(tooltipValues));
         localStorage.setItem('dropZoneText', dropZoneText);
     }
     
@@ -308,7 +308,7 @@ function readFromStorage()
         uploaded = localStorage.getItem('uploaded');
         xAxisValue = localStorage.getItem('xAxisValue');
         yAxisValue = localStorage.getItem('yAxisValue');
-        tooltipValues = localStorage.getItem('tooltipValues');
+        tooltipValues = JSON.parse(localStorage.getItem('tooltipValues'));  
         dropZoneText = localStorage.getItem('dropZoneText');
         
 
