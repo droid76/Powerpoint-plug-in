@@ -82,7 +82,8 @@ export var FileDropZone = function() {
               
               // Set dropZoneText
               setDropZoneText("Uploaded:" + file.name);
-              localStorage.setItem('fileName', file.name);
+            //   localStorage.setItem('fileName', file.name);
+            Office.context.document.settings.set('fileName', file.name);
           }
           reader.readAsText(file);
         })
@@ -127,6 +128,38 @@ export var FileDropZone = function() {
         setTooltipValues(labels);
         console.log("labels is ");
         console.log(labels);
+    }
+    const analyse = () =>
+    {
+        var yvalues = [];
+        var xvalues = [];
+        const data = '{"nargout":"1","rhs":"[[1,2,3,4,5,6,7,8,9,10,11,34,56,89,91]]"}';
+        fetch("http://ah-vgunda-l.dhcp.mathworks.com:9910/linearpred/linearpred",
+        {
+            method:'POST',
+            headers:
+            {
+                "Content-Type": "application/json" 
+            },
+            body: data
+        })
+        .then(res => res.json()).then
+        (
+            (result) => 
+            {
+                var h1 = document.createElement("h1");
+                h1.innerHTML = result;
+                document.body.appendChild(h1);
+            },
+            (error) => 
+            {
+                // var h1 = document.createElement("h1");
+                // h1.innerHTML = error;
+                // document.body.appendChild(h1);
+                
+            }
+        )
+
     }
     
     // Function to plot graph on click
@@ -213,17 +246,17 @@ export var FileDropZone = function() {
         }
 
         // Save state locally (persistent)
-        localStorage.setItem('fileContents', fileContents);
-        localStorage.setItem('fileRows', fileRows);
-        localStorage.setItem('headers', headers);
-        localStorage.setItem('headerTypes', headerTypes);
-        localStorage.setItem('possibleYAxisValues', possibleYAxisValues);
-        localStorage.setItem('possibleXAxisValues', possibleXAxisValues);
-        localStorage.setItem('uploaded', uploaded);
-        localStorage.setItem('xAxisValue', xAxisValue);
-        localStorage.setItem('yAxisValue', yAxisValue);
-        localStorage.setItem('tooltipValues', JSON.stringify(tooltipValues));
-        localStorage.setItem('dropZoneText', dropZoneText);
+        Office.context.document.settings.set('fileContents', fileContents);
+        Office.context.document.settings.set('fileRows', fileRows);
+        Office.context.document.settings.set('headers', headers);
+        Office.context.document.settings.set('headerTypes', headerTypes);
+        Office.context.document.settings.set('possibleYAxisValues', possibleYAxisValues);
+        Office.context.document.settings.set('possibleXAxisValues', possibleXAxisValues);
+        Office.context.document.settings.set('uploaded', uploaded);
+        Office.context.document.settings.set('xAxisValue', xAxisValue);
+        Office.context.document.settings.set('yAxisValue', yAxisValue);
+        Office.context.document.settings.set('tooltipValues', JSON.stringify(tooltipValues));
+        Office.context.document.settings.set('dropZoneText', dropZoneText);
     }
     
     // Similar to Cmponent Did Mount
@@ -255,6 +288,7 @@ export var FileDropZone = function() {
                             </Col>
                         </Row>
                         <Row>
+                            <Button variant="primary" onClick={analyse}>Analyse</Button>{' '}
                             <Button variant="primary" onClick={plotGraph}>Plot</Button>{' '}
                         </Row>
                         <Row>
@@ -295,21 +329,21 @@ export var FileDropZone = function() {
 // Read previously saved items if any
 function readFromStorage()
 {
-    var fileName = localStorage.getItem('fileName');
+    var fileName = Office.context.document.settings.get('fileName');
 
     var uploaded, xAxisValue,  yAxisValue, tooltipValues, dropZoneText;
     if(fileName != null) {
-        fileContents = localStorage.getItem('fileContents');
-        fileRows = localStorage.getItem('fileRows');
-        headers = localStorage.getItem('headers');
-        headerTypes = localStorage.getItem('headerTypes');
-        possibleYAxisValues = localStorage.getItem('possibleYAxisValues');
-        possibleXAxisValues = localStorage.getItem('possibleXAxisValues');
-        uploaded = localStorage.getItem('uploaded');
-        xAxisValue = localStorage.getItem('xAxisValue');
-        yAxisValue = localStorage.getItem('yAxisValue');
-        tooltipValues = JSON.parse(localStorage.getItem('tooltipValues'));  
-        dropZoneText = localStorage.getItem('dropZoneText');
+        fileContents = Office.context.document.settings.get('fileContents');
+        fileRows = Office.context.document.settings.get('fileRows');
+        headers = Office.context.document.settings.get('headers');
+        headerTypes = Office.context.document.settings.get('headerTypes');
+        possibleYAxisValues = Office.context.document.settings.get('possibleYAxisValues');
+        possibleXAxisValues = Office.context.document.settings.get('possibleXAxisValues');
+        uploaded = Office.context.document.settings.get('uploaded');
+        xAxisValue = Office.context.document.settings.get('xAxisValue');
+        yAxisValue = Office.context.document.settings.get('yAxisValue');
+        tooltipValues = JSON.parse(Office.context.document.settings.get('tooltipValues'));  
+        dropZoneText = Office.context.document.settings.get('dropZoneText');
         
 
         // Plot saved graph
