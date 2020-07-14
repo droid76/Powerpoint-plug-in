@@ -13,3 +13,4 @@ Currently, the Microsft Powerpoint does not offer interactive plots (like MATLAB
 6. Client-side code parses the data and plots the interactive graph using Javascript which is viewed by the User on the PPT slide
 
 # Sequence Diagram
+![Sequence Diagram](https://github.com/droid76/Powerpoint-plug-in/blob/master/images/Hackday_seqDiag.jpg)
