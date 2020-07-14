@@ -28,6 +28,7 @@ var possibleXAxisValues = [];
 var xAxisValuePred = ""; 
 var yAxisValuePred = "";
 var tooltipValuesPred = [];
+var xhr = undefined;
 
 const getUploadParams = () => {
     return { url: 'https://httpbin.org/post' }
@@ -140,13 +141,13 @@ export var FileDropZone = function() {
     {
         var yvalues = [];
         var xvalues = [];
-        const data = '{"nargout":1,"rhs":[[1,2,3,4,5,6,7,8,9,10,11,34,56,89,91]]}';
-        fetch("http://ah-vgunda-l.dhcp.mathworks.com:9910/linearpred/linearpred",
+        const data = JSON.stringify({"nargout":1,"rhs":[[1,2,3,4,5,6,7,8,9]]});
+        fetch("https://74a868806d97.ngrok.io/predictions/predictions",
         {
             method:'POST',
             headers:
             {
-                "Content-Type": "application/json" 
+                "Content-Type": "application/json"
             },
             body: data
         })
@@ -155,21 +156,23 @@ export var FileDropZone = function() {
             (result) => 
             {
                 var h1 = document.createElement("h1");
-                h1.innerHTML = result;
+                h1.innerHTML = JSON.stringify(result);
                 document.body.appendChild(h1);
             },
             (error) => 
             {
-                // var h1 = document.createElement("h1");
-                // h1.innerHTML = error;
-                // document.body.appendChild(h1);
+                var h1 = document.createElement("h1");
+                h1.innerHTML = error;
+                document.body.appendChild(h1);
 
                 // These are only the predicted values
-                yvalues = [0.058,0.51,0.8,0.005];
-                readFromAPI(yvalues);
+                // yvalues = [0.058,0.51,0.8,0.005];
+                // readFromAPI(yvalues);
             }
         )
-
+      
+            
+        
     }
     
     // Function to plot graph on click
@@ -242,6 +245,7 @@ export var FileDropZone = function() {
                 .data(data)
                 .enter().append("rect")
                 .attr("class", "bar")
+                .attr("fill", function (d){ return getRandomColor();})
                 .attr("x", function(d) { return x(d[xAxisValue]); })
                 .attr("width", x.bandwidth())
                 .attr("y", function(d) {  return y(d[yAxisValue]); })
@@ -435,7 +439,7 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
             .data(data)
             .enter().append("rect")
             .attr("class", "bar")
-            .style("fill", function (d){ return getRandomColor();})
+            .attr("fill", function (d){ return getRandomColor();})
             .attr("x", function(d) { return x(d[xAxisValue]); })
             .attr("width", x.bandwidth())
             .attr("y", function(d) { console.log("yaxis value is"); console.log(yAxisValue); console.log(d); return y(d[yAxisValue]); })
