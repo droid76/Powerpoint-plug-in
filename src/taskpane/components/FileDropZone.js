@@ -86,7 +86,7 @@ export var FileDropZone = function() {
               
               // Set dropZoneText
               setDropZoneText("Uploaded:" + file.name);
-            //   localStorage.setItem('fileName', file.name);
+            //localStorage.setItem('fileName', file.name);
             Office.context.document.settings.set('fileName', file.name);
           }
           reader.readAsText(file);
@@ -267,6 +267,7 @@ export var FileDropZone = function() {
         Office.context.document.settings.set('yAxisValue', yAxisValue);
         Office.context.document.settings.set('tooltipValues', JSON.stringify(tooltipValues));
         Office.context.document.settings.set('dropZoneText', dropZoneText);
+        Office.context.document.settings.saveAsync();
     }
     
     // Similar to Cmponent Did Mount
@@ -434,6 +435,7 @@ const plotSavedGraph = (fileName,uploaded, xAxisValue,  yAxisValue, tooltipValue
             .data(data)
             .enter().append("rect")
             .attr("class", "bar")
+            .style("fill", function (d){ return getRandomColor();})
             .attr("x", function(d) { return x(d[xAxisValue]); })
             .attr("width", x.bandwidth())
             .attr("y", function(d) { console.log("yaxis value is"); console.log(yAxisValue); console.log(d); return y(d[yAxisValue]); })
@@ -476,11 +478,6 @@ function readFromAPI(yValues)
 
 // Function to plot graph with predicted values
 const plotPredictedGraph = (xAxisValue,  yAxisValue, tooltipValues, data) => {
-
-    var h1 = document.createElement("h1");
-    h1.innerHTML = data;
-    document.body.appendChild(h1);
-
     // First delete the existing SVG elements
     d3.selectAll("svg").remove();
     
@@ -560,4 +557,14 @@ const plotPredictedGraph = (xAxisValue,  yAxisValue, tooltipValues, data) => {
         d[yAxisValue] = +d[yAxisValue];
         return d;
     }
+}
+
+// Get random color for each bar
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+         color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
