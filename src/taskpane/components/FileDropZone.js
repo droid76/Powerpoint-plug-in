@@ -139,9 +139,16 @@ export var FileDropZone = function() {
     }
     const analyse = () =>
     {
-        var yvalues = [];
-        var xvalues = [];
-        const data = JSON.stringify({"nargout":1,"rhs":[[1,2,3,4,5,6,7,8,9]]});
+        var yValues = [];
+
+        var parsedData = d3.csvParse(fileContents);
+
+        // Create yvalues array
+        for(var i=0;i<parsedData.length;i++) {
+            yValues.push(parseFloat(parsedData[i][yAxisValuePred]));
+        }
+
+        const data = JSON.stringify({"nargout":1,"rhs":[yValues]});
         fetch("https://74a868806d97.ngrok.io/predictions/predictions",
         {
             method:'POST',
@@ -155,19 +162,17 @@ export var FileDropZone = function() {
         (
             (result) => 
             {
-                var h1 = document.createElement("h1");
-                h1.innerHTML = JSON.stringify(result);
-                document.body.appendChild(h1);
+                // Get predicted values
+                var yPreds = result.lhs[0].mwdata;
+
+                // These are only the predicted values
+                readFromAPI(yPreds);
             },
             (error) => 
             {
                 var h1 = document.createElement("h1");
-                h1.innerHTML = error;
+                h1.innerHTML = JSON.parse(error);
                 document.body.appendChild(h1);
-
-                // These are only the predicted values
-                // yvalues = [0.058,0.51,0.8,0.005];
-                // readFromAPI(yvalues);
             }
         )
       
