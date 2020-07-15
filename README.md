@@ -1,3 +1,6 @@
+![Sequence Diagram](images/PP_D3_MATLAB.PNG)
+
+
 # Description
 Execute custom MATLAB scripts through Microsft Powerpoint add-in
 
@@ -12,5 +15,7 @@ Currently, the Microsft Powerpoint does not offer interactive plots (like MATLAB
 5. The MATLAB script running on the server will return the resulting output array as JSON
 6. Client-side code parses the data and plots the interactive graph using Javascript which is viewed by the User on the PPT slide
 
+For more usage details, [refer to this video.](https://web.microsoftstream.com/video/ed897f09-de7b-4eaf-a05f-ee9753c846ea)
+
 # Sequence Diagram
-![Sequence Diagram](https://github.com/droid76/Powerpoint-plug-in/blob/master/images/Hackday_seqDiag.jpg)
+![Sequence Diagram](images/Hackday_seqDiag.jpg)
