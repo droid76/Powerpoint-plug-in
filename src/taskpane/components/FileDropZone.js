@@ -149,7 +149,7 @@ export var FileDropZone = function() {
         }
 
         const data = JSON.stringify({"nargout":1,"rhs":[yValues]});
-        fetch("https://74a868806d97.ngrok.io/predictions/predictions",
+        fetch("https://87a55ee29ecb.ngrok.io/predictions/predictions",
         {
             method:'POST',
             headers:
