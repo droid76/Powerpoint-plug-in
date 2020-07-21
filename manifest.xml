@@ -9,8 +9,8 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="D3Lab"/>
   <Description DefaultValue="Draw interactive graphs using the power of D3 and MATLAB."/>
-  <IconUrl DefaultValue="https://droid76.github.io/Powerpoint-plug-in/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://droid76.github.io/Powerpoint-plug-in/assets/icon-80.png"/>
+  <IconUrl DefaultValue="https://droid76.github.io/Powerpoint-plug-in/assets/D3Lab-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://droid76.github.io/Powerpoint-plug-in/assets/D3Lab-80.png"/>
   <SupportUrl DefaultValue="https://github.com/droid76/Powerpoint-plug-in"/>
   <AppDomains>
   </AppDomains>
